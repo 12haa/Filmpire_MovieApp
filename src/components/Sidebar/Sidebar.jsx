@@ -26,7 +26,7 @@ const Sidebar = ({ setMobileOpen }) => {
   const dispatch = useDispatch();
   const {genreIdOrCategoryName} = useSelector((state)=>state.currentGenreOrCategory)  
 
-  console.log(genreIcons, "Icons");
+  console.log(genreIcons, "Icons");   
   genreIcons;
   const categories = [
     {

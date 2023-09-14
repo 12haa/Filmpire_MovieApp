@@ -46,12 +46,7 @@ const Navbar = () => {
           {!isMobile && <Search />}
           <div>
             {!isAuthenticated ? (
-              <Button
-                color="inherit"
-                onClick={() => {
-                  fetchToken();
-                }}
-              >
+              <Button color="inherit" onClick={fetchToken}>
                 {" "}
                 Login &nbsp; <AccountCircle />
               </Button>

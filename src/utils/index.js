@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const moviesApi = axios.create({
+export const moviesApi = axios.create({
   baseURL: " https://api.themoviedb.org/3",
   params: {
     api_key: import.meta.env.VITE_APP_TMDB_KEY,
@@ -11,7 +11,7 @@ export const fetchToken = async () => {
   try {
     const { data } = await moviesApi.get(`/authentication/token/new`);
     console.log(data, "im dataaaaaaaaaaaaaaaaaaaaaa");
-    let token = data.request_token;
+    const token = data.request_token;
 
     if (data.success) {
       localStorage.setItem("request_token", token);
@@ -19,5 +19,23 @@ export const fetchToken = async () => {
     }
   } catch (error) {
     console.log(" Sorry Your Token Could Not Be Created");
+  }
+};
+
+export const createSessionId = async () => {
+  const token = localStorage.getItem("request_token");
+
+  if (token) {
+    try {
+      const {
+        data: { session_id },
+      } = await moviesApi.post("authentication/session/new", {
+        request_token: token,
+      });
+      localStorage.setItem("session_id", session_id);
+      return session_id;
+    } catch (error) {
+      console.log(error);
+    }
   }
 };

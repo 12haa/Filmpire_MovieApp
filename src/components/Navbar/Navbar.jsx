@@ -7,6 +7,9 @@ import {
   Avatar,
   useMediaQuery,
 } from "@mui/material";
+
+// 09:43
+
 import {
   Menu,
   AccountCircle,
@@ -16,15 +19,41 @@ import {
 import { Link } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import useStyles from "./styles";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Sidebar } from "..";
-import { fetchToken } from "../../utils";
+import { fetchToken, moviesApi, createSessionId } from "../../utils";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser, userSelector } from "../../features/auth";
 const Navbar = () => {
+  const { isAuthenticated, user } = useSelector(userSelector);
   const classes = useStyles();
   const isMobile = useMediaQuery("(max-width :600px)");
   const theme = useTheme();
-  const isAuthenticated = false;
   const [mobileOpen, setMobileOpen] = useState(false);
+  const token = localStorage.getItem("request_token");
+  const sessionIdFromLocalStorage = localStorage.getItem("session_id");
+  const dispath = useDispatch();
+  console.log(user, "im User");
+  useEffect(() => {
+    const logInUser = async () => {
+      if (token) {
+        if (sessionIdFromLocalStorage) {
+          const { data: userData } = await moviesApi.get(
+            `/account?session_id=${sessionIdFromLocalStorage}`
+          );
+          dispath(setUser(userData));
+        } else {
+          const sessionId = await createSessionId();
+          const { data: userData } = await moviesApi.get(
+            `/account?session_id=${sessionId}`
+          );
+          dispath(setUser(userData));
+        }
+      }
+    };
+    logInUser();
+  }, [token]);
+
   return (
     <>
       <AppBar position="fixed">
@@ -54,7 +83,7 @@ const Navbar = () => {
               <Button
                 color="inherit"
                 component={Link}
-                to={`/profile/:id}`}
+                to={`/profile/${user.id}`}
                 className={classes.linkButton}
                 onClick={() => {}}
               >

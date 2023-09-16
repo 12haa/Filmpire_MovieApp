@@ -1,9 +1,100 @@
-import React from 'react'
-
+import { useState } from "react";
+import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { ArrowBack } from "@mui/icons-material";
+import {
+  useGetActorsDetilsQuery,
+  useGetMoviesByActorIdQuery,
+} from "../../sevices/TMDB";
+import { ClassNames } from "@emotion/react";
+import useStyles from "./styles";
+import MovieList from "../MovieList/MovieList";
 const Actors = () => {
-  return (
-    <div>Actors</div>
-  )
-}
+  const { id } = useParams();
+  const page = 1;
+  const navigate = useNavigate();
+  const { data, isFetching, error } = useGetActorsDetilsQuery(id);
+  const { data: movies } = useGetMoviesByActorIdQuery({ id, page });
+  const classes = useStyles();
+  if (isFetching) {
+    return (
+      <Box display="flex" justifyContent="center">
+        <CircularProgress size="8rem" />
+      </Box>
+    );
+  }
+  if (error) {
+    return (
+      <Box display="flex" justifyContent="center" alignItems="center">
+        <Button
+          startIcon={<ArrowBack />}
+          onClick={() => {
+            navigate("/");
+          }}
+          color="primary"
+        >
+          Go Back !
+        </Button>
+      </Box>
+    );
+  }
 
-export default Actors
+  return (
+    <>
+      <Grid container spacing={3}>
+        <Grid item lg={5} xl={4}>
+          <img
+            className={classes.image}
+            src={`https://image.tmdb.org/t/p/w780/${data?.profile_path}`}
+            alt={data.name}
+          />
+        </Grid>
+        <Grid
+          item
+          lg={7}
+          xl={8}
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            flexDirection: "column",
+          }}
+        >
+          <Typography variant="h2" gutterBottom>
+            {data?.name}
+          </Typography>
+          <Typography variant="h5" gutterBottom>
+            Born : {new Date(data?.birthDay).toDateString()}
+          </Typography>
+          <Typography variant="body1" align="justify" paragraph>
+            {data?.biography || "Sorry no Biography yet ..."}
+          </Typography>
+          <Box marginTop="2rem" display="flex" justifyContent="space-around">
+            <Button
+              variant="contained"
+              color="primary"
+              target="_blank"
+              href={`https://www.imdb.com/name/${data?.imdb_id}`}
+            >
+              IMDB
+            </Button>
+            <Button
+              startIcon={<ArrowBack />}
+              onClick={() => navigate(`/`)}
+              color="primary"
+            >
+              Back
+            </Button>
+          </Box>
+        </Grid>
+      </Grid>
+      <Box margin="2rem 0 ">
+        <Typography variant="h2" gutterBottom align="center">
+          {movies && <MovieList movies={movies} numberOfMovies={12} />}
+        </Typography>
+      </Box>
+    </>
+  );
+};
+
+export default Actors;

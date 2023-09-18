@@ -12,6 +12,12 @@ export const tmdbApi = createApi({
       query: () => `genre/movie/list?api_key=${tmdbApiKey}`,
     }),
 
+    // *
+    getList: builder.query({
+      query: ({ listName, accountId, sessionId, page }) =>
+        `/account/${accountId}/${listName}?api_key=${tmdbApiKey}&session_id=${sessionId}&page=${page}`,
+    }),
+
     // Get Movies By [Type]
     getMovies: builder.query({
       query: ({ genreIdOrCategoryName, page, searchQuery }) => {
@@ -33,7 +39,7 @@ export const tmdbApi = createApi({
           genreIdOrCategoryName &&
           typeof genreIdOrCategoryName === "number"
         ) {
-          console.log("Here!!");
+          
           return `discover/movie?with_genres=${genreIdOrCategoryName}&page=${page}&api_key=${tmdbApiKey}`;
         }
         // Get Popular Movies
@@ -67,4 +73,5 @@ export const {
   useGetRecomendationsQuery,
   useGetActorsDetilsQuery,
   useGetMoviesByActorIdQuery,
+  useGetListQuery,
 } = tmdbApi;

@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Box, Button, CircularProgress, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Grid,
+  Pagination,
+  Typography,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { ArrowBack } from "@mui/icons-material";
@@ -12,7 +19,7 @@ import useStyles from "./styles";
 import MovieList from "../MovieList/MovieList";
 const Actors = () => {
   const { id } = useParams();
-  const page = 1;
+  const [page, setPage] = useState(1);
   const navigate = useNavigate();
   const { data, isFetching, error } = useGetActorsDetilsQuery(id);
   const { data: movies } = useGetMoviesByActorIdQuery({ id, page });
@@ -91,6 +98,11 @@ const Actors = () => {
       <Box margin="2rem 0 ">
         <Typography variant="h2" gutterBottom align="center">
           {movies && <MovieList movies={movies} numberOfMovies={12} />}
+          <Pagination
+            currentPage={page}
+            setPage={setPage}
+            totalPage={movies?.total_page}
+          />
         </Typography>
       </Box>
     </>

@@ -19,11 +19,12 @@ import {
 import { Link } from "react-router-dom";
 import { useTheme } from "@mui/material/styles";
 import useStyles from "./styles";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Search, Sidebar } from "..";
 import { fetchToken, moviesApi, createSessionId } from "../../utils";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, userSelector } from "../../features/auth";
+import { ColorModeContext } from "../../utils/ToggleColorMode";
 const Navbar = () => {
   const { isAuthenticated, user } = useSelector(userSelector);
   const classes = useStyles();
@@ -33,6 +34,8 @@ const Navbar = () => {
   const token = localStorage.getItem("request_token");
   const sessionIdFromLocalStorage = localStorage.getItem("session_id");
   const dispath = useDispatch();
+
+  const colorMode = useContext(ColorModeContext);
   console.log(user, "im User");
   useEffect(() => {
     const logInUser = async () => {
@@ -69,7 +72,11 @@ const Navbar = () => {
               <Menu />
             </IconButton>
           )}
-          <IconButton color="inherit" sx={{ ml: 1 }} onClick={() => {}}>
+          <IconButton
+            color="inherit"
+            sx={{ ml: 1 }}
+            onClick={colorMode.toggleColorMode}
+          >
             {theme.palette.mode === "dark" ? <Brightness7 /> : <Brightness4 />}
           </IconButton>
           {!isMobile && <Search />}

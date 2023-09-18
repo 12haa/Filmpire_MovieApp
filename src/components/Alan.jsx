@@ -1,5 +1,5 @@
 import React, { useEffect, useContext } from "react";
-
+import { fetchToken } from "../utils/index";
 import alanBtn from "@alan-ai/alan-sdk-web";
 import { ColorModeContext } from "../utils/ToggleColorMode";
 import { setRef } from "@mui/material";
@@ -16,6 +16,11 @@ const useAlan = () => {
           } else {
             setMode("dark");
           }
+        } else if (command === "login") {
+          fetchToken();
+        } else if (command === "logout") {
+          localStorage.clear();
+          window.location.href = "/";
         }
       },
     });
